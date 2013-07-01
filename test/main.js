@@ -18,37 +18,51 @@ define(['assert', 'underscore', '../lib/main'], function (assert, _, random) {
     return level;
   }
 
-  // 8.1 undefined
+  // 8.1 Undefined
   assert(_.isUndefined(random.undefined()));
 
-  // 8.2 null
+  // 8.2 Null
   assert(_.isNull(random.null()));
 
-  // 8.3 boolean
+  // 8.3 Boolean
   assert(_.isBoolean(random.boolean()));
 
-  // 8.4 string
+  // 8.4 String
   (function () {
     var string;
 
     string = random.string();
     assert(_.isString(string));
-    assert(string.length <= 100);
+    assert(string.length <= 10);
 
-    assert(random.string(10).length <= 10);
+    assert(random.string(100).length <= 100);
   })();
 
-  // 8.5 number
-  _.times(20, function () {
+  // 8.5 Number
+  _.times(30, function () {
     assert(_.isNumber(random.number()));
   });
 
-  // 8.6 object
+  // 8.6 Object
   _.times(10, function () {
     assert(_.isObject(random.object()));
   });
 
-  _.times(30, function () {
+  // 15.3 Function
+  assert(_.isFunction(random.function()));
+
+  // 15.4 Array
+  (function () {
+    var array = random.array();
+
+    assert(_.isArray(array));
+    assert(depthOf(array) <= 5);
+    assert(array.length <= 10);
+
+    assert(random.array(5, 100).length <= 100);
+  })();
+
+  _.times(50, function () {
     assert(depthOf(random()) <= 5);
   });
 });
