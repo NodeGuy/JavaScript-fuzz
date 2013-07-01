@@ -65,6 +65,9 @@ define(['assert', 'underscore', '../lib/main'], function (assert, _, random) {
   // 15.9 Date
   assert(_.isDate(random.date()));
 
+  // 15.10 RegExp
+  assert(_.isRegExp(random.regexp()));
+
   _.times(50, function () {
     assert(depthOf(random()) <= 5);
   });
