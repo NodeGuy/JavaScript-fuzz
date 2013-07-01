@@ -53,8 +53,9 @@ define(['assert', 'underscore', '../lib/main'], function (assert, _, random) {
 
   // 15.4 Array
   (function () {
-    var array = random.array();
+    var array;
 
+    array = random.array();
     assert(_.isArray(array));
     assert(depthOf(array) <= 5);
     assert(array.length <= 10);
@@ -67,6 +68,9 @@ define(['assert', 'underscore', '../lib/main'], function (assert, _, random) {
 
   // 15.10 RegExp
   assert(_.isRegExp(random.regexp()));
+
+  // 15.11 Error
+  assert(random.error() instanceof Error);
 
   _.times(50, function () {
     assert(depthOf(random()) <= 5);
