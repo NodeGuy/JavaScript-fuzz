@@ -1,8 +1,12 @@
-This library generates random values for every standard, built-in type of
+JavaScript-fuzz generates random values for every standard, built-in type of
 [ECMAScript 5.1]
 (http://www.ecma-international.org/publications/standards/Ecma-262.htm)
 so you can use them to [fuzz test](https://en.wikipedia.org/wiki/Fuzz_testing)
 your code.
+
+Rather than generating only values which are probable to occur (such as recent
+dates), JavaScript-fuzz strives to generate values in the full legal range
+(e.g., including dates that are 270 millennia in the future).
 
 ## Usage
 
@@ -55,19 +59,19 @@ Returns `true` or `false`.
 
 ### random.string(options)
 
-Returns a random String of up to `options.maximumLength` characters.
+Returns a random `String` of up to `options.maximumLength` characters.
 
 ### random.number()
 
-Returns a Number, including possibly `NaN`, `-Infinity`, or `Infinity`.
+Returns a random `Number`, including possibly `NaN`, `-Infinity`, or `Infinity`.
 
 ### random.object()
 
-Returns a random Object.
+Returns a random `Object`.
 
 ### random.object.simple(options)
 
-Returns a simple random Object with at most `options.maximumLength` properties.
+Returns a random simple `Object` with at most `options.maximumLength` properties.
 
 ### random.object.function(options)
 
@@ -75,15 +79,15 @@ Returns `function () {}` with at most `options.maximumLength` properties.
 
 ### random.object.array(options)
 
-Returns a random Array with at most `options.maximumLength` elements.
+Returns a random `Array` with at most `options.maximumLength` elements.
 
 ### random.object.date()
 
-Returns a random Date.
+Returns a random `Date`.
 
 ### random.object.regexp()
 
-Returns a random RegExp.
+Returns a random `RegExp`.
 
 ### random.object.error()
 
