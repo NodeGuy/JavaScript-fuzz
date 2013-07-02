@@ -37,9 +37,9 @@ console.log(random());
 
 ## API
 
-### random(options)
+### random()
 
-Returns a random value with at most `options.maximumDepth` nested values.
+Returns a random value.
 
 ### random.undefined()
 
@@ -61,30 +61,31 @@ Returns a random String of up to `options.maximumLength` characters.
 
 Returns a Number, including possibly `NaN`, `-Infinity`, or `Infinity`.
 
-### random.object(options)
+### random.object()
 
-Returns a random Object with at most `options.maximumDepth` nested values and at
-most `options.maximumLength` properties.
+Returns a random Object.
 
-### random.function(options)
+### random.object.simple(options)
 
-Returns `function () {}` with at most `options.maximumDepth` nested values and
-at most `options.maximumLength` properties.
+Returns a simple random Object with at most `options.maximumLength` properties.
 
-### random.array(options)
+### random.object.function(options)
 
-Returns a random array with at most `options.maximumDepth` nested values and at
-most `options.maximumLength` elements.
+Returns `function () {}` with at most `options.maximumLength` properties.
 
-### random.date()
+### random.object.array(options)
+
+Returns a random Array with at most `options.maximumLength` elements.
+
+### random.object.date()
 
 Returns a random Date.
 
-### random.regexp()
+### random.object.regexp()
 
 Returns a random RegExp.
 
-### random.error()
+### random.object.error()
 
 Returns one of `Error`, `RangeError`, `ReferenceError`, `SyntaxError`,
 `TypeError`, or `URIError`, with a random message.

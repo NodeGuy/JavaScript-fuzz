@@ -2,32 +2,46 @@
 
 'use strict';
 
-define(['assert', 'underscore', '../lib/main'], function (assert, _, random) {
-  function depthOf(object) {
-    var level, key, value;
+define(['assert', 'util', 'underscore', '../lib/main'],
+  function (assert, util, _, random) {
+  function containsCircularReference(object) {
+    var references;
 
-    level = 1;
+    function visit(object) {
+      if (!_.isObject(object))
+        return false;
 
-    for (key in object) {
-      value = object[key];
+      if (_.contains(references, object))
+        return true;
 
-      if (object.hasOwnProperty(key) && _.isObject(value))
-        level = Math.max(depthOf(value) + 1, level);
+      references.push(object);
+
+      return _.values(object).map(visit).reduce(function (previous, current) {
+        return previous || current;
+      }, false);
     }
 
-    return level;
+    references = [];
+    return visit(object);
   }
 
+  (function () {
+    var object;
+
+    object = {};
+    object.reference = object;
+    assert(containsCircularReference(object));
+    assert(!containsCircularReference({}));
+  })();
+
   function test(times, sample, condition) {
-    var samples;
+    var index;
 
-    samples = [];
+    for (index = 0; index < times; index++)
+      if (condition(sample()))
+        return true;
 
-    _.times(times, function () {
-      samples.push(sample());
-    });
-
-    return samples.some(condition);
+    return false;
   }
 
   function testObject(generator) {
@@ -37,15 +51,12 @@ define(['assert', 'underscore', '../lib/main'], function (assert, _, random) {
     object = generator();
     assert(_.isObject(object));
     assert(Object.keys(object).length <= 10);
-    assert(depthOf(object) <= 5);
+    assert(test(1000, generator, containsCircularReference));
 
     assert(test(10, function () {
-      var object;
-
-      object = generator({maximumLength: 100, maximumDepth: 10});
-      return [Object.keys(object).length, depthOf(object)];
+      return Object.keys(generator({maximumLength: 100})).length;
     },
-    function (metrics) { return (metrics[0] > 10) && (metrics[1] > 5); }));
+    function (length) { return length > 10; }));
   }
 
   // 8.1 Undefined
@@ -78,12 +89,13 @@ define(['assert', 'underscore', '../lib/main'], function (assert, _, random) {
   });
 
   // 8.6 Object
-  testObject(random.object);
+  assert(_.isObject(random.object));
+  testObject(random.object.simple);
 
   // 15.3 Function
   (function () {
-    testObject(random.function);
-    assert(_.isFunction(random.function()));
+    testObject(random.object.function);
+    assert(_.isFunction(random.object.function()));
   })();
 
   // 15.4 Array
@@ -91,30 +103,59 @@ define(['assert', 'underscore', '../lib/main'], function (assert, _, random) {
     var array;
 
     // defaults
-    array = random.array();
+    array = random.object.array();
     assert(_.isArray(array));
-    assert(depthOf(array) <= 5);
     assert(array.length <= 10);
+    assert(test(100, random.object.array, containsCircularReference));
 
     assert(test(10, function () {
-      var array;
-
-      array = random.array({maximumLength: 100, maximumDepth: 10});
-      return [array.length, depthOf(array)];
+      return random.object.array({maximumLength: 100}).length;
     },
-    function (metrics) { return (metrics[0] > 10) && (metrics[1] > 5); }));
+    function (length) { return length > 10; }));
   })();
 
   // 15.9 Date
-  assert(_.isDate(random.date()));
+  assert(_.isDate(random.object.date()));
 
   // 15.10 RegExp
-  assert(_.isRegExp(random.regexp()));
+  _.times(10, function () {
+    assert(_.isRegExp(random.object.regexp()));
+  });
 
   // 15.11 Error
-  assert(random.error() instanceof Error);
+  assert(random.object.error() instanceof Error);
 
-  _.times(10, function () {
-    assert(depthOf(random()) <= 5);
-  });
+  // random
+  (function () {
+    var types;
+
+    types = {
+      undefined: _.isUndefined,
+      null: _.isNull,
+      boolean: _.isBoolean,
+      string: _.isString,
+      number: _.isNumber,
+      object: _.isObject,
+      function: _.isFunction,
+      array: _.isArray,
+      date: _.isDate,
+      regexp: _.isRegExp,
+      error: function (value) { return value instanceof Error; }
+    };
+
+    assert(test(1000, function () {
+      var value, key;
+
+      value = random();
+
+      for (key in types)
+        if (types[key](value)) {
+          delete types[key];
+          break;
+        }
+    },
+    function () { return _.size(types) === 0; }));
+
+    assert(test(1000, random, containsCircularReference));
+  })();
 });
