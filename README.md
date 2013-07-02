@@ -1,6 +1,8 @@
 This library generates random values for every standard, built-in type of
-[ECMAScript 5.1](http://www.ecma-international.org/publications/standards/Ecma-262.htm) so you can use them to
-[fuzz test](https://en.wikipedia.org/wiki/Fuzz_testing) your code.
+[ECMAScript 5.1]
+(http://www.ecma-international.org/publications/standards/Ecma-262.htm)
+so you can use them to [fuzz test](https://en.wikipedia.org/wiki/Fuzz_testing)
+your code.
 
 ## Usage
 
@@ -35,9 +37,9 @@ console.log(random());
 
 ## API
 
-### random([maximumDepth])
+### random(options)
 
-Returns a random value with at most `maximumDepth` nested values.
+Returns a random value with at most `options.maximumDepth` nested values.
 
 ### random.undefined()
 
@@ -51,25 +53,28 @@ Returns `null`.
 
 Returns `true` or `false`.
 
-### random.string([maximumLength])
+### random.string(options)
 
-Returns a random String of up to `maximumLength` characters.
+Returns a random String of up to `options.maximumLength` characters.
 
 ### random.number()
 
 Returns a Number, including possibly `NaN`, `-Infinity`, or `Infinity`.
 
-### random.object([maximumDepth], [maximumLength])
+### random.object(options)
 
-Returns a random Object with at most `maximumDepth` nested values and at most `maximumLength` properties.
+Returns a random Object with at most `options.maximumDepth` nested values and at
+most `options.maximumLength` properties.
 
-### random.function()
+### random.function(options)
 
-Returns `function () {}`.
+Returns `function () {}` with at most `options.maximumDepth` nested values and
+at most `options.maximumLength` properties.
 
-### random.array([maximumDepth], [maximumLength])
+### random.array(options)
 
-Returns a random array with at most `maximumDepth` nested values and at most `maximumLength` elements.
+Returns a random array with at most `options.maximumDepth` nested values and at
+most `options.maximumLength` elements.
 
 ### random.date()
 
@@ -81,7 +86,8 @@ Returns a random RegExp.
 
 ### random.error()
 
-Returns one of `Error`, `RangeError`, `ReferenceError`, `SyntaxError`, `TypeError`, or `URIError`, with a random message.
+Returns one of `Error`, `RangeError`, `ReferenceError`, `SyntaxError`,
+`TypeError`, or `URIError`, with a random message.
 
 ## Copyright
 
@@ -89,8 +95,15 @@ Copyright 2013 David Braun
 
 This file is part of JavaScript-fuzz.
 
-JavaScript-fuzz is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+JavaScript-fuzz is free software: you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
 
-JavaScript-fuzz is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+JavaScript-fuzz is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+details.
 
-You should have received a copy of the GNU Lesser General Public License along with JavaScript-fuzz. If not, see http://www.gnu.org/licenses/.
+You should have received a copy of the GNU Lesser General Public License along
+with JavaScript-fuzz. If not, see http://www.gnu.org/licenses/.

@@ -18,6 +18,36 @@ define(['assert', 'underscore', '../lib/main'], function (assert, _, random) {
     return level;
   }
 
+  function test(times, sample, condition) {
+    var samples;
+
+    samples = [];
+
+    _.times(times, function () {
+      samples.push(sample());
+    });
+
+    return samples.some(condition);
+  }
+
+  function testObject(generator) {
+    var object;
+
+    // defaults
+    object = generator();
+    assert(_.isObject(object));
+    assert(Object.keys(object).length <= 10);
+    assert(depthOf(object) <= 5);
+
+    assert(test(10, function () {
+      var object;
+
+      object = generator({maximumLength: 100, maximumDepth: 10});
+      return [Object.keys(object).length, depthOf(object)];
+    },
+    function (metrics) { return (metrics[0] > 10) && (metrics[1] > 5); }));
+  }
+
   // 8.1 Undefined
   assert(_.isUndefined(random.undefined()));
 
@@ -31,36 +61,48 @@ define(['assert', 'underscore', '../lib/main'], function (assert, _, random) {
   (function () {
     var string;
 
+    // defaults
     string = random.string();
     assert(_.isString(string));
     assert(string.length <= 10);
 
-    assert(random.string(100).length <= 100);
+    assert(test(10, function () {
+      return random.string({maximumLength: 100}).length;
+    },
+    function (length) { return length > 10; }));
   })();
 
   // 8.5 Number
-  _.times(30, function () {
+  _.times(10, function () {
     assert(_.isNumber(random.number()));
   });
 
   // 8.6 Object
-  _.times(10, function () {
-    assert(_.isObject(random.object()));
-  });
+  testObject(random.object);
 
   // 15.3 Function
-  assert(_.isFunction(random.function()));
+  (function () {
+    testObject(random.function);
+    assert(_.isFunction(random.function()));
+  })();
 
   // 15.4 Array
   (function () {
     var array;
 
+    // defaults
     array = random.array();
     assert(_.isArray(array));
     assert(depthOf(array) <= 5);
     assert(array.length <= 10);
 
-    assert(random.array(5, 100).length <= 100);
+    assert(test(10, function () {
+      var array;
+
+      array = random.array({maximumLength: 100, maximumDepth: 10});
+      return [array.length, depthOf(array)];
+    },
+    function (metrics) { return (metrics[0] > 10) && (metrics[1] > 5); }));
   })();
 
   // 15.9 Date
@@ -72,7 +114,7 @@ define(['assert', 'underscore', '../lib/main'], function (assert, _, random) {
   // 15.11 Error
   assert(random.error() instanceof Error);
 
-  _.times(50, function () {
+  _.times(10, function () {
     assert(depthOf(random()) <= 5);
   });
 });
