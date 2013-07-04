@@ -89,7 +89,7 @@ define(['assert', 'util', 'underscore', '../lib/main'],
   });
 
   // 8.6 Object
-  assert(_.isObject(random.object));
+  assert(_.isObject(random.object()));
   testObject(random.object.simple);
 
   // 15.3 Function
