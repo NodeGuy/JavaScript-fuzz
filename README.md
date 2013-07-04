@@ -41,9 +41,9 @@ console.log(random());
 
 ## API
 
-### random()
+### random([options])
 
-Returns a random value.
+Returns a random value.  Omits functions if `options.functions` is `false`.
 
 ### random.undefined()
 
@@ -65,9 +65,9 @@ Returns a random `String` of up to `options.maximumLength` characters.
 
 Returns a random `Number`, including possibly `NaN`, `-Infinity`, or `Infinity`.
 
-### random.object()
+### random.object([options])
 
-Returns a random `Object`.
+Returns a random `Object`.  Omits functions if `options.functions` is `false`.
 
 ### random.object.simple(options)
 

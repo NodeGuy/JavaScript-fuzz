@@ -4,7 +4,7 @@
 
 define(['assert', 'util', 'underscore', '../lib/main'],
   function (assert, util, _, random) {
-  function containsCircularReference(object) {
+  function containsMultipleReferences(object) {
     var references;
 
     function visit(object) {
@@ -30,8 +30,8 @@ define(['assert', 'util', 'underscore', '../lib/main'],
 
     object = {};
     object.reference = object;
-    assert(containsCircularReference(object));
-    assert(!containsCircularReference({}));
+    assert(containsMultipleReferences(object));
+    assert(!containsMultipleReferences({}));
   })();
 
   function test(times, sample, condition) {
@@ -51,7 +51,7 @@ define(['assert', 'util', 'underscore', '../lib/main'],
     object = generator();
     assert(_.isObject(object));
     assert(Object.keys(object).length <= 10);
-    assert(test(1000, generator, containsCircularReference));
+    assert(test(1000, generator, containsMultipleReferences));
 
     assert(test(10, function () {
       return Object.keys(generator({maximumLength: 100})).length;
@@ -92,6 +92,21 @@ define(['assert', 'util', 'underscore', '../lib/main'],
   assert(_.isObject(random.object()));
   testObject(random.object.simple);
 
+  assert(!test(100, function () {
+    return random.object.simple({functions: false});
+  }, function (object) {
+    return Object.keys(object).some(function (key) {
+      var descriptor;
+
+      descriptor = Object.getOwnPropertyDescriptor(object, key);
+
+      if (descriptor.get || descriptor.set)
+        console.log(util.inspect(descriptor));
+
+      return descriptor.get || descriptor.set;
+    });
+  }));
+
   // 15.3 Function
   (function () {
     testObject(random.object.function);
@@ -106,7 +121,7 @@ define(['assert', 'util', 'underscore', '../lib/main'],
     array = random.object.array();
     assert(_.isArray(array));
     assert(array.length <= 10);
-    assert(test(1000, random.object.array, containsCircularReference));
+    assert(test(1000, random.object.array, containsMultipleReferences));
 
     assert(test(10, function () {
       return random.object.array({maximumLength: 100}).length;
@@ -127,7 +142,21 @@ define(['assert', 'util', 'underscore', '../lib/main'],
 
   // random
   (function () {
-    var types;
+    var types, remainingTypes;
+
+    function containsFunction(object) {
+      if (!_.isObject(object))
+        return false;
+
+      if (_.isFunction(object))
+        return true;
+
+      return _.values(object).map(function (value) {
+          return _.isFunction(value) || containsFunction(value);
+        }).reduce(function (previous, current) {
+          return previous || current;
+        }, false);
+    }
 
     types = {
       undefined: _.isUndefined,
@@ -136,26 +165,50 @@ define(['assert', 'util', 'underscore', '../lib/main'],
       string: _.isString,
       number: _.isNumber,
       object: _.isObject,
-      function: _.isFunction,
       array: _.isArray,
       date: _.isDate,
       regexp: _.isRegExp,
       error: function (value) { return value instanceof Error; }
     };
 
+    remainingTypes = _.clone(types);
+    remainingTypes.function = _.isFunction;
+
     assert(test(1000, function () {
       var value, key;
 
       value = random();
 
-      for (key in types)
-        if (types[key](value)) {
-          delete types[key];
+      for (key in remainingTypes)
+        if (remainingTypes[key](value)) {
+          delete remainingTypes[key];
           break;
         }
     },
-    function () { return _.size(types) === 0; }));
+    function () {
+      return _.size(remainingTypes) === 0;
+    }));
 
-    assert(test(1000, random, containsCircularReference));
+    remainingTypes = _.clone(types);
+
+    assert(!test(1000, function () {
+      var value, key;
+
+      value = random({functions: false});
+
+      for (key in remainingTypes)
+        if (remainingTypes[key](value)) {
+          delete remainingTypes[key];
+          break;
+        }
+
+      return value;
+    },
+    function (value) {
+      return containsFunction(value);
+    }));
+
+    assert.equal(_.size(remainingTypes), 0);
+    assert(test(1000, random, containsMultipleReferences));
   })();
 });
