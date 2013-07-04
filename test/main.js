@@ -106,7 +106,7 @@ define(['assert', 'util', 'underscore', '../lib/main'],
     array = random.object.array();
     assert(_.isArray(array));
     assert(array.length <= 10);
-    assert(test(100, random.object.array, containsCircularReference));
+    assert(test(1000, random.object.array, containsCircularReference));
 
     assert(test(10, function () {
       return random.object.array({maximumLength: 100}).length;
