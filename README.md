@@ -89,10 +89,13 @@ Returns a random `Date`.
 
 Returns a random `RegExp`.
 
-### random.object.error()
+### random.object.error(options)
 
 Returns one of `Error`, `RangeError`, `ReferenceError`, `SyntaxError`,
 `TypeError`, or `URIError`, with a random message.
+
+Omits the non-standard `stack` property if `options.functions` is false because
+it sometimes has a getter function.
 
 ## Copyright
 

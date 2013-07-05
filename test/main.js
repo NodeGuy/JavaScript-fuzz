@@ -4,6 +4,26 @@
 
 define(['assert', 'util', 'underscore', '../lib/main'],
   function (assert, util, _, random) {
+  function containsFunction(object) {
+    if (!_.isObject(object))
+      return false;
+
+    if (_.isFunction(object))
+      return true;
+
+    return Object.getOwnPropertyNames(object).map(function (name) {
+        var descriptor;
+
+        descriptor = Object.getOwnPropertyDescriptor(object, name);
+
+        return descriptor.get
+          || descriptor.set
+          || containsFunction(descriptor.value);
+      }).reduce(function (previous, current) {
+        return previous || current;
+      }, false);
+  }
+
   function containsMultipleReferences(object) {
     var references;
 
@@ -94,18 +114,7 @@ define(['assert', 'util', 'underscore', '../lib/main'],
 
   assert(!test(100, function () {
     return random.object.simple({functions: false});
-  }, function (object) {
-    return Object.keys(object).some(function (key) {
-      var descriptor;
-
-      descriptor = Object.getOwnPropertyDescriptor(object, key);
-
-      if (descriptor.get || descriptor.set)
-        console.log(util.inspect(descriptor));
-
-      return descriptor.get || descriptor.set;
-    });
-  }));
+  }, containsFunction));
 
   // 15.3 Function
   (function () {
@@ -139,24 +148,11 @@ define(['assert', 'util', 'underscore', '../lib/main'],
 
   // 15.11 Error
   assert(random.object.error() instanceof Error);
+  assert(!containsFunction(random.object.error({functions: false})));
 
   // random
   (function () {
     var types, remainingTypes;
-
-    function containsFunction(object) {
-      if (!_.isObject(object))
-        return false;
-
-      if (_.isFunction(object))
-        return true;
-
-      return _.values(object).map(function (value) {
-          return _.isFunction(value) || containsFunction(value);
-        }).reduce(function (previous, current) {
-          return previous || current;
-        }, false);
-    }
 
     types = {
       undefined: _.isUndefined,
