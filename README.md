@@ -97,6 +97,10 @@ Returns one of `Error`, `RangeError`, `ReferenceError`, `SyntaxError`,
 Omits the non-standard `stack` property if `options.functions` is false because
 it sometimes has a getter function.
 
+## See Also
+
+[Gremlins.js](https://github.com/marmelab/gremlins.js) - Monkey testing library for web apps and Node.js
+
 ## Copyright
 
 Copyright 2013 David Braun
