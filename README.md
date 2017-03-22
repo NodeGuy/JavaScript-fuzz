@@ -99,7 +99,8 @@ it sometimes has a getter function.
 
 ## See Also
 
-[Gremlins.js](https://github.com/marmelab/gremlins.js) - Monkey testing library for web apps and Node.js
+* [Gremlins.js](https://github.com/marmelab/gremlins.js) - monkey testing library for web apps and Node.js
+* [JSCheck](http://jscheck.org/) - a testing tool for JavaScript inspired by QuickCheck
 
 ## Copyright
 
