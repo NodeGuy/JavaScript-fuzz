@@ -12,7 +12,7 @@ dates), JavaScript-fuzz strives to generate values in the full legal range
 
 ```JavaScript
 var assert = require('assert'),
-    random = require('JavaScript-fuzz');
+    random = require('javascript-fuzz');
 
 assert.equal(typeof random.boolean(), 'boolean');
 
